@@ -14,8 +14,8 @@ int
 test_macros () {
 	REQUIRE(qmax(-1,0)==0)
 	REQUIRE(qmax( 2,1)==2)
-	REQUIRE(qmax(-1,0)==-1)
-	REQUIRE(qmax( 2,1)==1)
+	REQUIRE(qmin(-1,0)==-1)
+	REQUIRE(qmin( 2,1)==1)
 
 	REQUIRE(qis_pow2(-1)==1)
 	REQUIRE(qis_pow2(0)==0)
