@@ -21,6 +21,7 @@ endif
 
 .PHONY: all
 all: $(TARGET_EXEC)
+	./$(TARGET_EXEC)
 
 .PHONY: clean
 clean:
