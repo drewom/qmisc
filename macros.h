@@ -20,9 +20,10 @@
 // The only time we switch to debug is when asked. NDEBUG or {nothing} results
 // in release build (fewer surprises at runtime).
 #if defined(DEBUG) || defined(_DEBUG)
-# define BUILD_DEBUG 1
+#	define BUILD_DEBUG 1
+#	include <stdio.h> /* fprintf() fflush() */
 #else
-# define BUILD_RELEASE 1
+#	define BUILD_RELEASE 1
 #endif
 
 /* hack: use instead of 0 to avoid w4127: "Cond. expr. is constant" */
