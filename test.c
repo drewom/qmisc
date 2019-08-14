@@ -7,6 +7,8 @@
  */
 
 #include <qmisc/macros.h>
+#include <qmisc/hashtbl.h>
+
 #include <stdio.h>
 #include <stdint.h> /* uintptr_t */
 
@@ -49,10 +51,40 @@ test_macros () {
 	return error;
 }
 
+static int
+test_hashtbl() {
+	int error = 0;
+	hashtbl_t tbl = {0};
+	REQUIRE(hashtbl_get(&tbl, 100) == 0);
+	hashtbl_set(&tbl, 100,  10000000000);
+	hashtbl_set(&tbl, 200,  10000000002);
+	hashtbl_set(&tbl, 300,  10000000004);
+	hashtbl_set(&tbl, 400,  10000000008);
+
+	for (int i=500; i<1000; ++i) {
+		REQUIRE(hashtbl_get(&tbl, i) == 0);
+	}
+	for (int i=500; i<1000; ++i) {
+		hashtbl_set(&tbl, i, i*i);
+	}
+	for (int i=500; i<1000; ++i) {
+		REQUIRE(hashtbl_get(&tbl, i) == i*i);
+	}
+
+	REQUIRE(hashtbl_get(&tbl, 100) == 10000000000);
+	REQUIRE(hashtbl_get(&tbl, 200) == 10000000002);
+	REQUIRE(hashtbl_get(&tbl, 300) == 10000000004);
+	REQUIRE(hashtbl_get(&tbl, 400) == 10000000008);
+	REQUIRE(hashtbl_get(&tbl, 401) == 0);
+
+	return error;
+}
+
 int
 main (int argc, char *argv[]) {
 	int error = 0;
 	error += test_macros();
+	error += test_hashtbl();
 	return !!error;
 }
 C_LINK_END
