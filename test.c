@@ -6,12 +6,14 @@
  * Drew O'Malley
  */
 
-#include "qmisc/macros.h"
+#include <qmisc/macros.h>
 #include <stdio.h>
 #include <stdint.h> /* uintptr_t */
 
 #define REQUIRE(e) \
-if(!(e)){fprintf(stderr,"%s|%d| %s [%lld]\n",__FILE__,__LINE__,#e,(long long)(e));return 1;}
+if(!(e)){fprintf(stderr,"%s|%d| failed %s\n",__FILE__,__LINE__,#e);}else{printf("passed %s\n", #e);}
+
+C_LINK_START
 int
 test_macros () {
 	REQUIRE(qmax(-1,0)==0)
@@ -42,6 +44,8 @@ test_macros () {
 	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC1, Q_CACHE_LINE) == (void *)0x0);
 	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC0, Q_CACHE_LINE) == (void *)0xFFFFFFFFFFFFFFC0);
 
+	qassert(1234==1234);
+
 	return 0;
 }
 
@@ -51,3 +55,4 @@ main (int argc, char *argv[]) {
 	is_error &= test_macros();
 	return is_error;
 }
+C_LINK_END
