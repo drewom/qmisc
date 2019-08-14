@@ -34,15 +34,16 @@ override LDFLAGS := $(_LDFLAGS) $(LDFLAGS)
 
 .PHONY: all
 all: $(TARGET_EXEC)$(TARGET)
-	./$(TARGET_EXEC)$(TARGET)
+	@echo "Running tests..."
+	@./$(TARGET_EXEC)$(TARGET) && echo "Success!" || echo "Failure!"
 
 .PHONY: debugger
 debugger: $(TARGET_EXEC)$(TARGET)
-	lldb -f ./$(TARGET_EXEC)$(TARGET) -o run
+	@lldb -f ./$(TARGET_EXEC)$(TARGET) -o "break set -n main" -o run
 
 .PHONY: clean
 clean:
-	@echo removing all make generated files
+	@echo Removing all make generated files
 	@rm -rf obj
 	@rm -f $(TARGET_EXEC) $(TARGET_EXEC).dbg tags
 

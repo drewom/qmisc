@@ -11,11 +11,11 @@
 #include <stdint.h> /* uintptr_t */
 
 #define REQUIRE(e) \
-if(!(e)){fprintf(stderr,"%s|%d| failed %s\n",__FILE__,__LINE__,#e);}else{printf("passed %s\n", #e);}
+if(!(e)){fprintf(stderr,"%s|%d| failed %s\n",__FILE__,__LINE__,#e);++error;}
 
-C_LINK_START
-int
+C_LINK_START static int
 test_macros () {
+	int error = 0;
 	REQUIRE(qmax(-1,0)==0)
 	REQUIRE(qmax( 2,1)==2)
 	REQUIRE(qmin(-1,0)==-1)
@@ -46,13 +46,13 @@ test_macros () {
 
 	qassert(1234==1234);
 
-	return 0;
+	return error;
 }
 
 int
 main (int argc, char *argv[]) {
-	int is_error = 0;
-	is_error &= test_macros();
-	return is_error;
+	int error = 0;
+	error += test_macros();
+	return !!error;
 }
 C_LINK_END
