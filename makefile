@@ -42,8 +42,9 @@ debugger: $(TARGET_EXEC)$(TARGET)
 
 .PHONY: clean
 clean:
-	@echo removing all
-	@rm -r $(TARGET_EXEC) $(TARGET_EXEC).dbg obj
+	@echo removing all make generated files
+	@rm -rf obj
+	@rm -f $(TARGET_EXEC) $(TARGET_EXEC).dbg tags
 
 $(TARGET_EXEC)$(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
