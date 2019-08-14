@@ -10,8 +10,7 @@
 
 #define qmin(l, r) ((l)<=(r) ?(l) :(r))
 #define qmax(l, r) ((l)>=(r) ?(l) :(r))
-#define qclamp_max(x, max) qmin(x, max)
-#define qclamp_min(x, min) qmax(x, min)
+#define qclamp(min, x, max) qmax(qmin(x, max), min)
 #define qis_pow2(v) (((v) != 0) && ((v) & ((v)-1)) == 0)
 
 /* Memory alignment */
