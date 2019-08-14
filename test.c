@@ -8,6 +8,7 @@
 
 #include "qmisc/macros.h"
 #include <stdio.h>
+#include <stdint.h> /* uintptr_t */
 
 #define REQUIRE(expr) if(!(expr)) { fprintf(stderr, "%s|%d| %s %lld\n", __FILE__, __LINE__, #expr, (long long)(expr)); return 1; }
 int
@@ -32,6 +33,11 @@ test_macros () {
 	REQUIRE(qalign_down(0x0000003F, 64) == 0x00000000);
 	REQUIRE(  qalign_up(0x00000001, 64) == 0x00000040);
 	REQUIRE(  qalign_up(0xFFFFFFFF, 64) == 0x00000000);
+
+	REQUIRE(qalign_ptr_down((void *)0xFFFFFFFFFFFFFFFF, 64) == (void *)0xFFFFFFFFFFFFFFC0);
+	REQUIRE(qalign_ptr_down((void *)0x0000003F, 64) == (void *)0x00000000);
+	REQUIRE(  qalign_ptr_up((void *)0x00000001, 64) == (void *)0x00000040);
+	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFFF, 64) == (void *)0x00000000);
 
 	return 0;
 }
