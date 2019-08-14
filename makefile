@@ -1,46 +1,59 @@
 #!/usr/bin/make -f
-# DEBUG={0|1}
 TARGET_EXEC ?= $(shell basename "$$PWD")
 
-SRCS := $(shell find . -name *.cpp -or -name *.c -or -name *.s)
-OBJS := $(SRCS:./%=obj/%.o)
-DEPS := $(OBJS:.o=.d)
+SRCS := $(shell find . -name *.cpp -or -name *.c)
 
 INC_DIRS := ../
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
-
 DEBUG=1
-
-ifeq ($(DEBUG),1)
-CFLAGS+=-O0 -g -ggdb3
+ifneq ($(DEBUG),0)
+	TARGET := .dbg
+	_CPPFLAGS += $(INC_FLAGS) -DDEBUG -MMD -MP
+	_CFLAGS   += -O0 -g
+	_CXXFLAGS += -O0 -g
 else
-CFLAGS+=-O2
+	TARGET :=
+	_CPPFLAGS += $(INC_FLAGS) -DNDEBUG -MMD -MP
+	_CFLAGS   += -O2 -g
+	_CXXFLAGS += -O2 -g
 endif
 
+OBJS := $(SRCS:./%=obj/%$(TARGET).o)
+DEPS := $(OBJS:.o=.d)
+
+
+# Merge flags with user flags. We ensure this way that user options follow our
+# options, which should give user's options preference while not completely
+# replacing our own. This allows us to harden our compile while still allowing
+# the user to override us (for testing different -On values for instance).
+override CPPFLAGS := $(_CPPFLAGS) $(CPPFLAGS)
+override CFLAGS := $(_CFLAGS) $(CFLAGS)
+override CXXFLAGS := $(_CXXFLAGS) $(CXXFLAGS)
+override LDFLAGS := $(_LDFLAGS) $(LDFLAGS)
+
 .PHONY: all
-all: $(TARGET_EXEC)
-	./$(TARGET_EXEC)
+all: $(TARGET_EXEC)$(TARGET)
+	./$(TARGET_EXEC)$(TARGET)
+
+.PHONY: debugger
+debugger: $(TARGET_EXEC)$(TARGET)
+	lldb -f ./$(TARGET_EXEC)$(TARGET) -o run
 
 .PHONY: clean
 clean:
 	@echo removing all
-	@rm -r $(TARGET_EXEC) obj
+	@rm -r $(TARGET_EXEC) $(TARGET_EXEC).dbg obj
 
-$(TARGET_EXEC): $(OBJS)
+$(TARGET_EXEC)$(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-# assembly
-obj/%.s.o: %.s | obj/
-	$(AS) $(ASFLAGS) -c $< -o $@
-
 # c source
-obj/%.c.o: %.c | obj/
+obj/%.c$(TARGET).o: %.c | obj/
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 # c++ source
-obj/%.cpp.o: %.cpp | obj/
+obj/%.cpp$(TARGET).o: %.cpp | obj/
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # directories (add with | so only made if missing)
