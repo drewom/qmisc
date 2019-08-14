@@ -30,17 +30,17 @@ test_macros () {
 	REQUIRE(qis_pow2(7)==0)
 	REQUIRE(qis_pow2(8)==1)
 
-	REQUIRE(qalign_down(0xFFFFFFFF, 64) == 0xFFFFFFC0);
-	REQUIRE(qalign_down(0x0000003F, 64) == 0x00000000);
-	REQUIRE(  qalign_up(0x00000001, 64) == 0x00000040);
-	REQUIRE(  qalign_up(0xFFFFFFC1, 64) == 0x00000000);
-	REQUIRE(  qalign_up(0xFFFFFFC0, 64) == 0xFFFFFFC0);
+	REQUIRE(qalign_down(0xFFFFFFFF, Q_CACHE_LINE) == 0xFFFFFFC0);
+	REQUIRE(qalign_down(0x0000003F, Q_CACHE_LINE) == 0x00000000);
+	REQUIRE(  qalign_up(0x00000001, Q_CACHE_LINE) == 0x00000040);
+	REQUIRE(  qalign_up(0xFFFFFFC1, Q_CACHE_LINE) == 0x00000000);
+	REQUIRE(  qalign_up(0xFFFFFFC0, Q_CACHE_LINE) == 0xFFFFFFC0);
 
-	REQUIRE(qalign_ptr_down((void *)0xFFFFFFFFFFFFFFFF, 64) == (void *)0xFFFFFFFFFFFFFFC0);
-	REQUIRE(qalign_ptr_down((void *)0x3F, 64) == (void *)0x0);
-	REQUIRE(  qalign_ptr_up((void *)0x1, 64) == (void *)0x40);
-	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC1, 64) == (void *)0x0);
-	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC0, 64) == (void *)0xFFFFFFFFFFFFFFC0);
+	REQUIRE(qalign_ptr_down((void *)0xFFFFFFFFFFFFFFFF, Q_CACHE_LINE) == (void *)0xFFFFFFFFFFFFFFC0);
+	REQUIRE(qalign_ptr_down((void *)0x3F, Q_CACHE_LINE) == (void *)0x0);
+	REQUIRE(  qalign_ptr_up((void *)0x1, Q_CACHE_LINE) == (void *)0x40);
+	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC1, Q_CACHE_LINE) == (void *)0x0);
+	REQUIRE(  qalign_ptr_up((void *)0xFFFFFFFFFFFFFFC0, Q_CACHE_LINE) == (void *)0xFFFFFFFFFFFFFFC0);
 
 	return 0;
 }

@@ -14,6 +14,7 @@
 #define qis_pow2(v) (((v) != 0) && ((v) & ((v)-1)) == 0)
 
 /* Memory alignment */
+enum { Q_CACHE_LINE = 64 }; /* All plats are 64byte cacheline atm */
 #define qalign_down(v, a) \
 	((v) & ~((a)-1))
 #define qalign_up(n, a) \
