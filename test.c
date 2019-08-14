@@ -9,7 +9,7 @@
 #include "qmisc/macros.h"
 #include <stdio.h>
 
-#define REQUIRE(expr) if(!(expr)) { fprintf(stderr, "%s|%d| %s\n", __FILE__, __LINE__, #expr); return 1; }
+#define REQUIRE(expr) if(!(expr)) { fprintf(stderr, "%s|%d| %s %lld\n", __FILE__, __LINE__, #expr, (long long)(expr)); return 1; }
 int
 test_macros () {
 	REQUIRE(qmax(-1,0)==0)
@@ -27,6 +27,12 @@ test_macros () {
 	REQUIRE(qis_pow2(4)==1)
 	REQUIRE(qis_pow2(7)==0)
 	REQUIRE(qis_pow2(8)==1)
+
+	REQUIRE(qalign_down(0xFFFFFFFF, 64) == 0xFFFFFFC0);
+	REQUIRE(qalign_down(0x0000003F, 64) == 0x00000000);
+	REQUIRE(  qalign_up(0x00000001, 64) == 0x00000040);
+	REQUIRE(  qalign_up(0xFFFFFFFF, 64) == 0x00000000);
+
 	return 0;
 }
 
