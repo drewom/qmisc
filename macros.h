@@ -48,7 +48,7 @@
 
 /* Always check this assert, even in -DNDEBUG build */
 #define qassert_always(cond) \
-(!(cond)&&(fprintf(stderr,"%s\n",#cond),1)&&(fflush(stderr),1)&&BREAKPOINT,0)
+(!(cond)&&(fprintf(stderr,"%s|%d| %s\n",__FILE__,__LINE__,#cond),1)&&(fflush(stderr),1)&&BREAKPOINT,0)
 
 /* Normal asserts (sizeof in no-op stops cond. being evaluated) */
 #ifdef BUILD_DEBUG
