@@ -61,13 +61,13 @@ test_hashtbl() {
 	hashtbl_set(&tbl, 300,  10000000004);
 	hashtbl_set(&tbl, 400,  10000000008);
 
-	for (int i=500; i<1000; ++i) {
+	for (int i=500; i<1008; ++i) {
 		REQUIRE(hashtbl_get(&tbl, i) == 0);
 	}
-	for (int i=500; i<1000; ++i) {
+	for (int i=500; i<1008; ++i) {
 		hashtbl_set(&tbl, i, i*i);
 	}
-	for (int i=500; i<1000; ++i) {
+	for (int i=500; i<1008; ++i) {
 		REQUIRE(hashtbl_get(&tbl, i) == i*i);
 	}
 
@@ -76,6 +76,43 @@ test_hashtbl() {
 	REQUIRE(hashtbl_get(&tbl, 300) == 10000000004);
 	REQUIRE(hashtbl_get(&tbl, 400) == 10000000008);
 	REQUIRE(hashtbl_get(&tbl, 401) == 0);
+	REQUIRE(tbl.len == 512);
+
+	hashtbl_remove(&tbl, 200);
+	REQUIRE(hashtbl_get(&tbl, 200) == 0);
+	REQUIRE(tbl.len == 511);
+	hashtbl_remove(&tbl, 401);
+	REQUIRE(tbl.len == 511);
+
+	for (int i=10000; i<20000; i+=1) {
+		hashtbl_set(&tbl, i, i+1);
+	}
+	for (int i=10000; i<20000; i+=1) {
+		REQUIRE(hashtbl_get(&tbl, i) == i+1);
+	}
+
+	for (int i=10000; i<20000; i+=2) {
+		REQUIRE(hashtbl_remove(&tbl, i));
+	}
+
+	for (int i=20000; i<30000; i+=1) {
+		hashtbl_set(&tbl, i, i+1);
+	}
+
+	for (int i=10000; i<20000; i+=2) {
+		REQUIRE(hashtbl_get(&tbl, i) == 0);
+		REQUIRE(hashtbl_get(&tbl, i+1) == i+2);
+	}
+
+	hashtbl_free(&tbl);
+	REQUIRE(hashtbl_get(&tbl, 100) == 0);
+	REQUIRE(tbl.len == 0);
+	REQUIRE(tbl.cap == 0);
+
+	hashtbl_set(&tbl, 100, 1);
+	REQUIRE(hashtbl_get(&tbl, 100) == 1);
+	REQUIRE(tbl.len == 1);
+	REQUIRE(tbl.cap >= 1);
 
 	return error;
 }
