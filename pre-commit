@@ -1,0 +1,19 @@
+#!/bin/sh
+# Stash untracked changes, runs tests, unstashes. Add any source
+# validation you like here. Install with:
+# - `ln -s ../../pre-commit .git/hooks/pre-commit`
+# Drew O'Malley
+
+# stash to changes not in index, so tests run against what is
+# to be checked in
+git stash push --quiet --keep-index --message "pre-commit $(date +%a\ %R)"
+
+make DEBUG=1 test
+FAILED=$?
+
+make DEBUG=0 test
+[ $FAILED -e 0 ] && FAILED=$?
+
+git stash pop -q
+[ $FAILED -ne 0 ] && exit 1 # exit stops commit
+exit 0
