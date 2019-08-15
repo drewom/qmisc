@@ -71,6 +71,8 @@ qassert(tbl); qassert(!tbl->cap||qis_pow2(tbl->cap));              \
 qassert(!tbl->cap || tbl->cap > tbl->len);                         \
 qassert((!tbl->vals && !tbl->vals) || tbl->cap);
 
+#define INF_LOOP_CHECKED (int __i=0, __N=tbl->cap; __i<__N; ++__i)
+
 uintptr_t
 hashtbl_get(hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 	qassert(key);
@@ -80,12 +82,12 @@ hashtbl_get(hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 	       mask = tbl->cap-1,
 	       slot = hash & mask; /* == (hash % tbl->cap) if cap is ^2 */
 
-	for (int i=0;!qassert(i<tbl->cap);++i) { /* check for inf loop */
+	for INF_LOOP_CHECKED { /* check for inf loop */
 		if (tbl->keys[slot] == key) { return tbl->vals[slot]; }
 		if (tbl->keys[slot] == 0)   { return 0; }
 		++slot; slot &= mask;
 	}
-	qassert(0&&"Unreachable code");
+	qassert(0&&"hashtbl requires at least one empty slot at all times!");
 }
 
 
@@ -102,7 +104,7 @@ hashtbl_set(hashtbl_t *tbl, uintptr_t key, uintptr_t val) { HASHTBL_CHECKS
 	       slot = hash & mask;
 	int result = !tbl->keys[slot];
 
-	for (int i=0;!qassert(i<tbl->cap);++i) { /* check for inf loop */
+	for INF_LOOP_CHECKED { /* check for inf loop */
 		uintptr_t test = tbl->keys[slot];
 		if (!test || test == key)   {
 			tbl->len += (uintptr_t)!test; /* len += (test==0) ? 1 : 0 */
@@ -113,7 +115,7 @@ hashtbl_set(hashtbl_t *tbl, uintptr_t key, uintptr_t val) { HASHTBL_CHECKS
 		}
 		++slot; slot &= mask;
 	}
-	qassert(0&&"Unreachable code");
+	qassert(0&&"hashtbl requires at least one empty slot at all times!");
 }
 
 static void
@@ -152,11 +154,12 @@ hashtbl_remove (hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 	       mask = tbl->cap-1,
 	       slot = hash & mask; /* == (hash % tbl->cap) if cap is ^2 */
 
-	for (int i=0;!qassert(i<tbl->cap);++i) { /* check for inf loop */
+	for INF_LOOP_CHECKED { /* check for inf loop */
 		if (tbl->keys[slot] == key) { break; }
 		if (tbl->keys[slot] == 0)   { return 0; }
 		++slot; slot &= mask;
-	}
+	} qassert(tbl->keys[slot] == key);
+
 	/* remove this slot */
 	tbl->keys[slot] = 0;
 	tbl->vals[slot] = 0;
@@ -164,7 +167,7 @@ hashtbl_remove (hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 
 	/* walk the chain down, re-adding as we go */
 	++slot;
-	for (int i=0;!qassert(i<tbl->cap);++i) { /* check for inf loop */
+	for INF_LOOP_CHECKED { /* check for inf loop */
 		if (tbl->keys[slot] == 0) { break; } /* once key's empty, stop */
 
 		/* remove before add, as it may go here again */
@@ -179,6 +182,7 @@ hashtbl_remove (hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 }
 
 #undef HASHTBL_CHECKS
+#undef INF_LOOP_CHECKED
 C_LINK_END
 
 #endif

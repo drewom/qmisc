@@ -32,8 +32,8 @@ override CFLAGS := $(_CFLAGS) $(CFLAGS)
 override CXXFLAGS := $(_CXXFLAGS) $(CXXFLAGS)
 override LDFLAGS := $(_LDFLAGS) $(LDFLAGS)
 
-.PHONY: all
-all: $(TARGET_EXEC)$(TARGET)
+.PHONY: test
+test: $(TARGET_EXEC)$(TARGET)
 	@echo "Running tests..."
 	@./$(TARGET_EXEC)$(TARGET) && echo "Success!" || echo "Failure!"
 
