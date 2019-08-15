@@ -105,14 +105,29 @@ test_hashtbl() {
 	}
 
 	hashtbl_free(&tbl);
+
 	REQUIRE(hashtbl_get(&tbl, 100) == 0);
 	REQUIRE(tbl.len == 0);
 	REQUIRE(tbl.cap == 0);
+	hashtbl_set(&tbl, 100, 1);
+	hashtbl_remove(&tbl, 200); /* test reuse empty */
+	REQUIRE(tbl.len == 1);
+	REQUIRE(tbl.cap > 0);
 
+	hashtbl_set(&tbl, 100, 1);
+	hashtbl_set(&tbl, 100, 1); /* test set multiple */
 	hashtbl_set(&tbl, 100, 1);
 	REQUIRE(hashtbl_get(&tbl, 100) == 1);
 	REQUIRE(tbl.len == 1);
-	REQUIRE(tbl.cap >= 1);
+
+	hashtbl_remove(&tbl, 200);
+
+	hashtbl_set(&tbl, 200, 2);
+	hashtbl_remove(&tbl, 200);
+	hashtbl_remove(&tbl, 200); /* test remove multiple */
+	hashtbl_remove(&tbl, 200);
+	REQUIRE(hashtbl_get(&tbl, 200) == 0);
+	REQUIRE(tbl.len == 1);
 
 	return error;
 }
