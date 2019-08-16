@@ -38,8 +38,8 @@ C_LINK_START
 typedef struct {
     uintptr_t *keys;
     uintptr_t *vals;
-    size_t len;
     size_t cap;
+    size_t len;
 } hashtbl_t;
 
 size_t
@@ -88,6 +88,7 @@ hashtbl_get(hashtbl_t *tbl, uintptr_t key) { HASHTBL_CHECKS
 		++slot; slot &= mask;
 	}
 	qassert(0&&"hashtbl requires at least one empty slot at all times!");
+	return 0;
 }
 
 
@@ -97,7 +98,8 @@ hashtbl_set(hashtbl_t *tbl, uintptr_t key, uintptr_t val) { HASHTBL_CHECKS
 
 	/* if cap is 0 or >= 50% residency (unless under stress-test) */
 	if (!tbl->cap || tbl->cap <= HASHTBL_GROW_TRIGGER(tbl->len)) {
-		hashtbl_grow_at_least(tbl, 2*tbl->cap); }
+		hashtbl_grow_at_least(tbl, 2*tbl->cap);
+	}
 
 	size_t hash = hash_uintptr(key),
 	       mask = tbl->cap-1,
@@ -116,6 +118,7 @@ hashtbl_set(hashtbl_t *tbl, uintptr_t key, uintptr_t val) { HASHTBL_CHECKS
 		++slot; slot &= mask;
 	}
 	qassert(0&&"hashtbl requires at least one empty slot at all times!");
+	return 0;
 }
 
 static void
@@ -125,7 +128,7 @@ hashtbl_grow_at_least (hashtbl_t *tbl, size_t cap) { HASHTBL_CHECKS
 	hashtbl_t new_tbl = {
 		qcalloc(cap,  sizeof(uintptr_t)),
 		qmalloc(cap * sizeof(uintptr_t)),
-		0, cap
+		cap, 0
 	};
 
 	for (size_t slot=0, N=tbl->cap; slot<N; ++slot) {
