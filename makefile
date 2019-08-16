@@ -10,13 +10,13 @@ DEBUG=1
 ifneq ($(DEBUG),0)
 	TARGET := .dbg
 	_CPPFLAGS += $(INC_FLAGS) -DDEBUG -MMD -MP
-	_CFLAGS   += -O0 -g
-	_CXXFLAGS += -O0 -g
+	_CFLAGS   += -O0 -g -Wall -Wextra
+	_CXXFLAGS += -O0 -g -Wall -Wextra
 else
 	TARGET :=
 	_CPPFLAGS += $(INC_FLAGS) -DNDEBUG -MMD -MP
-	_CFLAGS   += -O2 -g
-	_CXXFLAGS += -O2 -g
+	_CFLAGS   += -O2 -g -Wall -Wextra
+	_CXXFLAGS += -O2 -g -Wall -Wextra
 endif
 
 OBJS := $(SRCS:./%=obj/%$(TARGET).o)
