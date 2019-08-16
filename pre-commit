@@ -12,7 +12,7 @@ make DEBUG=1 test
 FAILED=$?
 
 make DEBUG=0 test
-[ $FAILED -e 0 ] && FAILED=$?
+[ $FAILED -eq 0 ] && FAILED=$?
 
 git stash pop -q
 [ $FAILED -ne 0 ] && exit 1 # exit stops commit
