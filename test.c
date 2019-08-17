@@ -68,7 +68,7 @@ test_hashtbl() {
 		hashtbl_set(&tbl, i, i*i);
 	}
 	for (int i=500; i<1008; ++i) {
-		REQUIRE(hashtbl_get(&tbl, i) == i*i);
+		REQUIRE(hashtbl_get(&tbl, i) == (uintptr_t)i*i);
 	}
 
 	REQUIRE(hashtbl_get(&tbl, 100) == 10000000000);
@@ -88,7 +88,7 @@ test_hashtbl() {
 		hashtbl_set(&tbl, i, i+1);
 	}
 	for (int i=10000; i<20000; i+=1) {
-		REQUIRE(hashtbl_get(&tbl, i) == i+1);
+		REQUIRE(hashtbl_get(&tbl, i) == (uintptr_t)i+1);
 	}
 
 	for (int i=10000; i<20000; i+=2) {
@@ -101,7 +101,7 @@ test_hashtbl() {
 
 	for (int i=10000; i<20000; i+=2) {
 		REQUIRE(hashtbl_get(&tbl, i) == 0);
-		REQUIRE(hashtbl_get(&tbl, i+1) == i+2);
+		REQUIRE(hashtbl_get(&tbl, i+1) == (uintptr_t)i+2);
 	}
 
 	hashtbl_free(&tbl);
@@ -133,7 +133,7 @@ test_hashtbl() {
 }
 
 int
-main (int argc, char *argv[]) {
+main (int argc, char *argv[]) { (void)argc; (void)argv;
 	int error = 0;
 	error += test_macros();
 	error += test_hashtbl();
