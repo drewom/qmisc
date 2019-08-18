@@ -17,6 +17,9 @@
 #	 error Neither DEBUG or NDEBUG are defined.
 #endif
 
+#define __MAC_CAT_(l, r) l##r
+#define __MAC_CAT(l, r) __MAC_CAT_(l, r)
+
 // The only time we switch to debug is when asked. NDEBUG or {nothing} results
 // in release build (fewer surprises at runtime).
 #if defined(DEBUG) || defined(_DEBUG)
@@ -49,6 +52,10 @@
 /* Always check this assert, even in -DNDEBUG build */
 #define qassert_always(cond) \
 (void)(!(cond)&&(fprintf(stderr,"%s|%d| %s\n",__FILE__,__LINE__,#cond),1)&&(fflush(stderr),1)&&BREAKPOINT)
+
+/* Compile time assert, needs new line between each*/
+#define qsassert(cond, msg) \
+;enum { __MAC_CAT(__assert_line_, __LINE__) = 1/(int)(!!(cond)) }
 
 /* Normal asserts (sizeof in no-op stops cond. being evaluated) */
 #ifdef BUILD_DEBUG
