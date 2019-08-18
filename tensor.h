@@ -21,19 +21,27 @@ typedef union {
 	struct { float u, v; };
 float arr[2];
 } v2T_t; qsassert(sizeof(v2T_t) == 2*sizeof(float), "v2 != 8bytes");
+v2T_t v2T(float x, float y) {
+	v2T_t res = {{x, y}};
+	return res;
+}
 
 typedef union {
-	struct { float __1, y; };
-	struct { v2T_t xy; float z; };
-	struct { float x; v2T_t yz; };
-	struct { float __2, g; };
+	struct { float x, y, z; };
+	struct { v2T_t xy; float __1; };
+	struct { float __2; v2T_t yz; };
+	struct { float __3, g; };
 	struct { v2T_t rg; float b; };
 	struct { float r; v2T_t gb; };
-	struct { float __3, v; };
+	struct { float __4, v; };
 	struct { v2T_t uv; float w; };
 	struct { float u; v2T_t vw; };
 	float arr[3];
 } v3T_t; qsassert(sizeof(v3T_t) == 3*sizeof(float), "v3 != 12bytes");
+v3T_t v3T(float x, float y, float z) {
+	v3T_t res = {{x, y, z}};
+	return res;
+}
 
 typedef union {
 	struct { float x, y, z, W; };
@@ -53,6 +61,10 @@ typedef union {
 
 	float arr[4];
 } v4T_t; qsassert(sizeof(v4T_t) == 4*sizeof(float), "v4 != 16bytes");
+v4T_t v4T(float x, float y, float z, float W) {
+	v4T_t res = {{x, y, z, W}};
+	return res;
+}
 
 typedef union {
 	struct { float x, y; };
@@ -61,6 +73,10 @@ typedef union {
 	float arr[2];
 	v2T_t T;
 } v2_t; qsassert(sizeof(v2_t) == 2*sizeof(float), "v2 != 8bytes");
+v2_t v2(float x, float y) {
+	v2_t res = {{x, y}};
+	return res;
+}
 
 typedef union {
 	struct { float x, y, z; };
@@ -75,6 +91,10 @@ typedef union {
 	float arr[3];
 	v3T_t T;
 } v3_t; qsassert(sizeof(v3_t) == 3*sizeof(float), "v3 != 12bytes");
+v3_t v3(float x, float y, float z) {
+	v3_t res = {{x, y, z}};
+	return res;
+}
 
 typedef union {
 	struct { float x, y, z, W; };
@@ -94,6 +114,10 @@ typedef union {
 	float arr[4];
 	v4T_t T;
 } v4_t; qsassert(sizeof(v4_t) == 4*sizeof(float), "v4 != 16bytes");
+v4_t v4(float x, float y, float z, float W) {
+	v4_t res = {{x, y, z, W}};
+	return res;
+}
 
 C_LINK_START
 
@@ -110,6 +134,38 @@ v3_add(v3_t l, v3_t r) {
 static v4_t
 v4_add(v4_t l, v4_t r) {
 	v4_t res = {{ l.x+r.x, l.y+r.y, l.z+r.z, l.W+r.W }};
+	return res;
+}
+
+static v2_t
+v2_neg(v2_t v) {
+	v2_t res = {{ -v.x, -v.y }};
+	return res;
+}
+static v3_t
+v3_neg(v3_t v) {
+	v3_t res = {{ -v.x, -v.y, -v.z }};
+	return res;
+}
+static v4_t
+v4_neg(v4_t v) {
+	v4_t res = {{ -v.x, -v.y, -v.z, -v.W }};
+	return res;
+}
+
+static v2_t
+v2_sub(v2_t l, v2_t r) {
+	v2_t res = {{ l.x-r.x, l.y-r.y }};
+	return res;
+}
+static v3_t
+v3_sub(v3_t l, v3_t r) {
+	v3_t res = {{ l.x-r.x, l.y-r.y, l.z-r.z }};
+	return res;
+}
+static v4_t
+v4_sub(v4_t l, v4_t r) {
+	v4_t res = {{ l.x-r.x, l.y-r.y, l.z-r.z, l.W-r.W }};
 	return res;
 }
 
@@ -149,20 +205,36 @@ v4_len(v4_t v) {
 static v2_t
 v2_norm_or_zero(v2_t v) {
 	float len = v2_len(v);
-	v.x*=len; v.y*=len;
+	v.x/=len; v.y/=len;
 	return v;
 }
 static v3_t
 v3_norm_or_zero(v3_t v) {
 	float len = v3_len(v);
-	v.x*=len; v.y*=len; v.z*=len;
+	v.x/=len; v.y/=len; v.z/=len;
 	return v;
 }
 static v4_t
 v4_norm_or_zero(v4_t v) {
 	float len = v4_len(v);
-	v.x*=len; v.y*=len; v.z*=len; v.W*=len;
+	v.x/=len; v.y/=len; v.z/=len; v.W/=len;
 	return v;
+}
+
+static float
+v2T_mult_v2(v2T_t l, v2_t r) {
+	float res = l.x*r.x + l.y*r.y;
+	return res;
+}
+static float
+v3T_mult_v3(v3T_t l, v3_t r) {
+	float res = l.x*r.x + l.y*r.y + l.z*r.z;
+	return res;
+}
+static float
+v4T_mult_v4(v4T_t l, v4_t r) {
+	float res = l.x*r.x + l.y*r.y + l.z*r.z + l.W*r.W;
+	return res;
 }
 
 static v3_t
