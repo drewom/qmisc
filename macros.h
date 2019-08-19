@@ -82,6 +82,6 @@ enum { Q_CACHE_LINE = 64 }; /* All modern platforms have 64byte cacheline */
 	((void *)qalign_up((uintptr_t)(p), (a)))
 
 #define qcountof(arr) \
-	(sizeof(arr)/sizeof(arr[0]))
+	((size_t)sizeof(arr)/(size_t)sizeof(arr[0]))
 
 #endif
